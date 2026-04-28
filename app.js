@@ -2,6 +2,10 @@ const express = require("express");
 const app = express();
 
 app.use(express.json());
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/", (req, res) => {
     res.send("Banking API is running 🚀");
