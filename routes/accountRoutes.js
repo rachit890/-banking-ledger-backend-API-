@@ -17,28 +17,48 @@ const { getMyAccount,transferMoney, getBalance } = require("../controllers/accou
 router.get("/me",protect,getMyAccount);
 
 /**
- * @swagger
- * /api/account/transfer:
- *   post:
- *     summary: Transfer money to another user
- *     tags: [Account]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               to:
- *                 type: string
- *                 example: userId_here
- *               amount:
- *                 type: number
- *                 example: 500
- *     responses:
- *       200:
- *         description: Transfer successful
- */
+* @swagger
+* /api/account/transfer:
+*   post:
+*     summary: Transfer money to another user
+*     tags: [Account]
+*     security:
+*       - bearerAuth: []
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             type: object
+*             required:
+*               - to
+*               - amount
+*               - idempotencyKey
+*             properties:
+*               to:
+*                 type: string
+*                 description: Receiver user ID
+*                 example: 64f1c2a9b1234567890abcd
+*               amount:
+*                 type: number
+*                 description: Amount to transfer
+*                 example: 500
+*               idempotencyKey:
+*                 type: string
+*                 description: Unique key to prevent duplicate transactions
+*                 example: txn_12345
+*     responses:
+*       200:
+*         description: Transfer successful
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 message:
+*                   type: string
+*                   example: Transfer successful
+*/
 router.post("/transfer", protect, transferMoney);
 
 /**
@@ -47,9 +67,19 @@ router.post("/transfer", protect, transferMoney);
  *   get:
  *     summary: Get account balance
  *     tags: [Account]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Balance fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 balance:
+ *                   type: number
+ *                   example: 1500
  */
 router.get("/balance", protect, getBalance);
 module.exports = router;
