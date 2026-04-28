@@ -162,7 +162,7 @@ Response:
 ## ⚠️ Known Limitations
 
 * Cold start delay (30–50 seconds) due to free hosting
-* Backend-only project (no frontend UI)
+
 
 ---
 
