@@ -1,114 +1,171 @@
-# 💳 Banking Backend API
+# 🏦 Banking Backend API
 
-This project is a backend system for a banking application, built to simulate real-world financial operations like money transfers, transaction tracking, and account management.
+A full-featured backend system for a banking application built using Node.js, Express, and MongoDB.
+It supports authentication, account management, money transfer, transaction tracking, and a ledger system with API documentation using Swagger.
 
-It focuses on **data consistency, security, and real-world backend practices** rather than just basic CRUD operations.
+---
 
-## 🚀 What this project does
+## 🚀 Live API
 
-This API allows users to:
+🔗 https://banking-backend-n1y8.onrender.com
+📘 Swagger Docs: https://banking-backend-n1y8.onrender.com/api-docs
 
-* Register and log in securely using JWT authentication
-* Maintain an account with a balance
-* Transfer money to other users
-* View transaction history
-* Track all balance changes through a ledger system
-
-##  Key Highlights
-
-This project goes beyond basic backend development and includes:
-
-* **Atomic Transactions**
-  Ensures money transfers either fully succeed or fully fail (no partial updates)
-
-* **Idempotency Handling**
-  Prevents duplicate transactions if the same request is sent multiple times
-
-* **Ledger System (Double-entry accounting)**
-  Every transaction creates:
-
-  * a debit entry (sender)
-  * a credit entry (receiver)
-
-* **Immutable Financial Records**
-  Ledger entries cannot be modified once created
-
-* **Proper Validation & Error Handling**
-  Includes input validation and meaningful API responses
+⚠️ Note: This project is deployed on Render (free tier).
+The server may take **30–50 seconds to respond** after inactivity due to cold start.
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Node.js**
-* **Express.js**
-* **MongoDB**
-* **Mongoose**
-* **JWT (Authentication)**
+* Node.js
+* Express.js
+* MongoDB (Atlas)
+* Mongoose
+* JWT Authentication
+* Swagger (OpenAPI)
+* Render (Deployment)
 
 ---
 
-## 📦 API Endpoints
+## 📌 Features
 
 ### 🔐 Authentication
 
-* `POST /api/auth/register` → Register user
-* `POST /api/auth/login` → Login user
+* User Registration
+* User Login (JWT-based)
 
-### 💸 Account
+### 👤 Account
 
-* `POST /api/account/transfer` → Transfer money
-* `GET /api/account/balance` → Get current balance
+* Get current user account
+* Check account balance
 
-### 📊 Transactions
+### 💸 Transactions
 
-* `GET /api/transactions` → Get transaction history
-* `GET /api/transactions/:id` → Get specific transaction
+* Transfer money between accounts
+* Fetch transaction history (with pagination)
+* Get transaction by ID
+
+### 📒 Ledger
+
+* View account statement
+
+### 📊 Pagination
+
+* Implemented on transactions API
+* Supports `page` and `limit`
+
+### 📘 API Documentation
+
+* Swagger UI integrated
+* Available at `/api-docs`
 
 ---
 
-## ⚙️ How to Run Locally
+## 📂 API Endpoints
+
+### 🔐 Auth
+
+| Method | Endpoint           | Description       |
+| ------ | ------------------ | ----------------- |
+| POST   | /api/auth/register | Register new user |
+| POST   | /api/auth/login    | Login user        |
+
+---
+
+### 👤 Account
+
+| Method | Endpoint              | Description         |
+| ------ | --------------------- | ------------------- |
+| GET    | /api/account/me       | Get account details |
+| GET    | /api/account/balance  | Get balance         |
+| POST   | /api/account/transfer | Transfer money      |
+
+---
+
+### 💸 Transactions
+
+| Method | Endpoint              | Description                |
+| ------ | --------------------- | -------------------------- |
+| GET    | /api/transactions     | Get paginated transactions |
+| GET    | /api/transactions/:id | Get transaction by ID      |
+
+Query Params:
+
+```
+?page=1&limit=10
+```
+
+---
+
+### 📒 Ledger
+
+| Method | Endpoint    | Description           |
+| ------ | ----------- | --------------------- |
+| GET    | /api/ledger | Get account statement |
+
+---
+
+## 🔐 Authentication
+
+All protected routes require JWT token:
+
+```
+Authorization: Bearer <your_token>
+```
+
+---
+
+## ⚙️ Installation (Local Setup)
 
 ```bash
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
 npm install
-npm run dev
 ```
 
----
-
-## 🔐 Environment Variables
-
-Create a `.env` file in the root:
+### Create `.env` file:
 
 ```
-MONGO_URI=your_mongodb_connection_string
+PORT=5000
+MONGO_URI=your_mongodb_connection
 JWT_SECRET=your_secret_key
-PORT=8000
+```
+
+### Run server:
+
+```bash
+npm start
 ```
 
 ---
 
-## 🧠 Project Design Thinking
+## 📊 Pagination Example
 
-This project was built with a focus on:
+```
+GET /api/transactions?page=1&limit=5
+```
 
-* Maintaining **data consistency during concurrent operations**
-* Preventing **duplicate transactions using idempotency keys**
-* Separating concerns across controllers and models
-* Designing systems similar to **real banking backends**
+Response:
+
+```json
+{
+  "page": 1,
+  "limit": 5,
+  "total": 25,
+  "totalPages": 5,
+  "transactions": []
+}
+```
+
+---
+
+## ⚠️ Known Limitations
+
+* Cold start delay (30–50 seconds) due to free hosting
+* Backend-only project (no frontend UI)
 
 ---
 
-## 📌 Future Improvements
+## 🙌 Author
 
-* Pagination for transaction history
-* Rate limiting for API protection
-* Deployment and live API access
-
----
-
-## 🙌 Final Note
-
-This project represents a step beyond beginner backend development and focuses on solving real-world problems like **safe money transfer and transaction tracking**.
-
----
+**Rachit Kumar**
