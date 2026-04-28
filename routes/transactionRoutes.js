@@ -10,10 +10,25 @@ const { getTransactions, getTransactionById } = require("../controllers/transact
  * @swagger
  * /api/transactions:
  *   get:
- *     summary: Get all transactions of logged-in user
+ *     summary: Get paginated transactions of logged-in user
  *     tags: [Transaction]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *         description: Number of transactions per page
  *     responses:
  *       200:
  *         description: Transactions fetched successfully
@@ -22,6 +37,18 @@ const { getTransactions, getTransactionById } = require("../controllers/transact
  *             schema:
  *               type: object
  *               properties:
+ *                 page:
+ *                   type: integer
+ *                   example: 1
+ *                 limit:
+ *                   type: integer
+ *                   example: 10
+ *                 total:
+ *                   type: integer
+ *                   example: 25
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 3
  *                 transactions:
  *                   type: array
  *                   items:
@@ -30,12 +57,6 @@ const { getTransactions, getTransactionById } = require("../controllers/transact
  *                       _id:
  *                         type: string
  *                         example: 64f1c2a9b1234567890abcd
- *                       fromAccount:
- *                         type: string
- *                         example: 64f1c2a9b1234567890aaaa
- *                       toAccount:
- *                         type: string
- *                         example: 64f1c2a9b1234567890bbbb
  *                       amount:
  *                         type: number
  *                         example: 500
@@ -45,6 +66,15 @@ const { getTransactions, getTransactionById } = require("../controllers/transact
  *                       createdAt:
  *                         type: string
  *                         example: 2024-01-01T10:00:00Z
+ *                       type:
+ *                         type: string
+ *                         example: sent
+ *                       from:
+ *                         type: string
+ *                         example: Rachit
+ *                       to:
+ *                         type: string
+ *                         example: Aman
  */
 router.get("/", protect, getTransactions);
 

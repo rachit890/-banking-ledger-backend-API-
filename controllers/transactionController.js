@@ -14,6 +14,12 @@ exports.getTransactions = async (req, res) => {
           message: "Account not found",
         });
       }
+
+      const page = Math.max(1, Number(req.query.page) || 1);
+      const limit = Math.max(1, Number(req.query.limit) || 10);
+      const skip = (page - 1) * limit;
+  
+
   
       const transactions = await Transaction.find({
         $or: [
@@ -37,8 +43,16 @@ exports.getTransactions = async (req, res) => {
           select: "name email"
         }
       })
-      .sort({ createdAt: -1 });
-  
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+      const total = await Transaction.countDocuments({
+        $or: [
+          { fromAccount: account._id },
+          { toAccount: account._id },
+        ],
+      });
       // Add type field
       const formatted = transactions.map(txn => {
         const isSender =
@@ -57,6 +71,10 @@ exports.getTransactions = async (req, res) => {
       });
   
       res.json({
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
         transactions: formatted,
       });
   
