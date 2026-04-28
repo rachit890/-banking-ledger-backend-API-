@@ -31,6 +31,30 @@ const { protect } = require("../middleware/authMiddleware");
  *         description: User registered successfully
  */
 router.post("/register", register);
+
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: rachit@test.com
+ *               password:
+ *                 type: string
+ *                 example: 123456
+ *     responses:
+ *       200:
+ *         description: Login successful
+ */
 router.post("/login", login);
 
 module.exports = router;
