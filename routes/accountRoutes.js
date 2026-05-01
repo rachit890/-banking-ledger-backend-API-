@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { protect } = require("../middleware/authMiddleware");
-const { getMyAccount,transferMoney, getBalance } = require("../controllers/accountController");
+const { getMyAccount,transferMoney, getBalance,createAccount, updateAccountStatus} = require("../controllers/accountController");
 
 /**
  * @swagger
