@@ -16,6 +16,10 @@ const { protect } = require("../middleware/authMiddleware");
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
  *             properties:
  *               name:
  *                 type: string
@@ -29,6 +33,28 @@ const { protect } = require("../middleware/authMiddleware");
  *     responses:
  *       201:
  *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User registered successfully. Please create account
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 64f1c2a9b1234567890abcd
+ *                     name:
+ *                       type: string
+ *                       example: Rachit
+ *                     email:
+ *                       type: string
+ *                       example: rachit@test.com
+ *       400:
+ *         description: User already exists
  */
 router.post("/register", register);
 
@@ -62,9 +88,26 @@ router.post("/register", register);
  *             schema:
  *               type: object
  *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login Successful
  *                 token:
  *                   type: string
  *                   example: jwt_token_here
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 64f1c2a9b1234567890abcd
+ *                     name:
+ *                       type: string
+ *                       example: Rachit
+ *                     email:
+ *                       type: string
+ *                       example: rachit@test.com
+ *       400:
+ *         description: Invalid credentials or user not found
  */
 router.post("/login", login);
 

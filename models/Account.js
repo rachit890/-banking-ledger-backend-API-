@@ -15,6 +15,12 @@ const accountSchema = new mongoose.Schema(
       default: 0,
       min: [0, "Balance cannot be negative"], // safety
     },
+
+    status: {
+      type: String,
+      enum: ["ACTIVE", "FROZEN"],
+      default: "ACTIVE",
+    },
   },
   { timestamps: true }
 );

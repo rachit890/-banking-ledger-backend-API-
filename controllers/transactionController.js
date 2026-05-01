@@ -11,7 +11,7 @@ exports.getTransactions = async (req, res) => {
   
       if (!account) {
         return res.status(404).json({
-          message: "Account not found",
+          message: "Account not found. Please create account first",
         });
       }
 
@@ -97,7 +97,7 @@ exports.getTransactionById = async (req, res) => {
   
       if (!account) {
         return res.status(404).json({
-          message: "Account not found",
+          message: "Account not found. Please create account first",
         });
       }
   

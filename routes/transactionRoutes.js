@@ -75,50 +75,76 @@ const { getTransactions, getTransactionById } = require("../controllers/transact
  *                       to:
  *                         type: string
  *                         example: Aman
+ *       404:
+ *         description: Account not found
  */
 router.get("/", protect, getTransactions);
 
 /**
-* @swagger
-* /api/transactions/{id}:
-*   get:
-*     summary: Get transaction by ID
-*     tags: [Transaction]
-*     security:
-*       - bearerAuth: []
-*     parameters:
-*       - in: path
-*         name: id
-*         required: true
-*         description: Transaction ID
-*         schema:
-*           type: string
-*     responses:
-*       200:
-*         description: Transaction fetched successfully
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 transaction:
-*                   type: object
-*                   properties:
-*                     _id:
-*                       type: string
-*                     fromAccount:
-*                       type: string
-*                     toAccount:
-*                       type: string
-*                     amount:
-*                       type: number
-*                     status:
-*                       type: string
-*                     createdAt:
-*                       type: string
-*       404:
-*         description: Transaction not found
-*/
+ * @swagger
+ * /api/transactions/{id}:
+ *   get:
+ *     summary: Get transaction by ID
+ *     tags: [Transaction]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Transaction ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Transaction fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 transaction:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 64f1c2a9b1234567890abcd
+ *                     amount:
+ *                       type: number
+ *                       example: 500
+ *                     status:
+ *                       type: string
+ *                       example: COMPLETED
+ *                     createdAt:
+ *                       type: string
+ *                       example: 2024-01-01T10:00:00Z
+ *                     fromAccount:
+ *                       type: object
+ *                       properties:
+ *                         user:
+ *                           type: object
+ *                           properties:
+ *                             name:
+ *                               type: string
+ *                               example: Rachit
+ *                             email:
+ *                               type: string
+ *                               example: rachit@test.com
+ *                     toAccount:
+ *                       type: object
+ *                       properties:
+ *                         user:
+ *                           type: object
+ *                           properties:
+ *                             name:
+ *                               type: string
+ *                               example: Aman
+ *                             email:
+ *                               type: string
+ *                               example: aman@test.com
+ *       404:
+ *         description: Transaction not found or account not found
+ */
 router.get("/:id", protect, getTransactionById);
 
 module.exports = router;

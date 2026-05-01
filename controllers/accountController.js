@@ -3,6 +3,37 @@ const mongoose = require("mongoose");
 const Transaction = require("../models/Transaction");
 const Ledger = require("../models/Ledger");
 
+exports.createAccount = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // check if account already exists
+    const existing = await Account.findOne({ user: userId });
+
+    if (existing) {
+      return res.status(400).json({
+        message: "Account already exists",
+      });
+    }
+
+    const account = await Account.create({
+      user: userId,
+      balance: 0,
+      status: "ACTIVE",
+    });
+
+    res.status(201).json({
+      message: "Account created successfully",
+      account,
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
+
 exports.getMyAccount = async (req,res) => {
 
     try{
@@ -91,7 +122,7 @@ exports.transferMoney = async (req, res) => {
       await session.abortTransaction();
       session.endSession();
       return res.status(404).json({
-        message: "Sender account not found",
+        message: "Sender account not found. Please create account first", // ✅ updated
       });
     }
 
@@ -99,7 +130,24 @@ exports.transferMoney = async (req, res) => {
       await session.abortTransaction();
       session.endSession();
       return res.status(404).json({
-        message: "Receiver account not found",
+        message: "Receiver account not found. Please ask receiver to create account first", // ✅ updated
+      });
+    }
+
+    // 🔥 NEW: status checks
+    if (senderAccount.status === "FROZEN") {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(403).json({
+        message: "Your account is frozen. Transactions are not allowed",
+      });
+    }
+
+    if (receiverAccount.status === "FROZEN") {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(403).json({
+        message: "Receiver account is frozen",
       });
     }
 
@@ -119,6 +167,26 @@ exports.transferMoney = async (req, res) => {
       });
     }
 
+    // 🚨 Fraud check: too many transactions in short time
+    const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
+
+    const recentTxns = await Transaction.countDocuments({
+      fromAccount: senderAccount._id,
+      createdAt: { $gte: oneMinuteAgo },
+    });
+
+    if (recentTxns >= 5) {
+      senderAccount.status = "FROZEN";
+      await senderAccount.save({ session });
+
+      await session.abortTransaction();
+      session.endSession();
+
+      return res.status(403).json({
+        message: "Too many transactions. Account has been frozen.",
+      });
+    }   
+
     //  1. Create Transaction (PENDING)
     const transaction = await Transaction.create(
       [{
@@ -126,7 +194,7 @@ exports.transferMoney = async (req, res) => {
         toAccount: receiverAccount._id,
         amount: amt,
         status: "PENDING",
-        idempotencyKey, //  important
+        idempotencyKey,
       }],
       { session }
     );
@@ -208,12 +276,50 @@ exports.getBalance = async (req, res) => {
 
     if (!account) {
       return res.status(404).json({
-        message: "Account not found",
+        message: "Account not found. Please create account first", // ✅ updated
       });
     }
 
     res.json({
       balance: account.balance,
+      status: account.status, // ✅ added
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
+
+exports.updateAccountStatus = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { status } = req.body;
+
+    // 🔹 validate input
+    if (!status || !["ACTIVE", "FROZEN"].includes(status)) {
+      return res.status(400).json({
+        message: "Invalid status. Use ACTIVE or FROZEN",
+      });
+    }
+
+    // 🔹 find account
+    const account = await Account.findOne({ user: userId });
+
+    if (!account) {
+      return res.status(404).json({
+        message: "Account not found. Please create account first",
+      });
+    }
+
+    // 🔹 update status
+    account.status = status;
+    await account.save();
+
+    res.json({
+      message: "Account status updated successfully",
+      status: account.status,
     });
 
   } catch (err) {

@@ -10,7 +10,7 @@ exports.getStatement = async (req, res) => {
 
     if (!account) {
       return res.status(404).json({
-        message: "Account not found",
+        message: "Account not found. Please create account first", // ✅ updated
       });
     }
 
